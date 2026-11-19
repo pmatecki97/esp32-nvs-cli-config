@@ -79,7 +79,7 @@ esp_err_t nvs_mgr_set_float(const char *key, float value){
     return err;
 }
 /*(czwarty setter)
-dokłądnie to samo co powyżej tylko używamy funkcji dedykowanej 
+dokładnie to samo co powyżej tylko używamy funkcji dedykowanej 
 do stringow - mvs_set_str(uchwyt,klucz,nasze slowo)
 ZAPIS STRING DO FLASH*/
 esp_err_t nvs_mgr_set_string(const char *key,const char *value){
@@ -91,6 +91,66 @@ esp_err_t nvs_mgr_set_string(const char *key,const char *value){
     if(err==ESP_OK){
         err=nvs_commit(handle);
     }    
+    nvs_close(handle);
+    return err;
+}
+/*(pierwszy getter)
+zmieniamy tryb na odczyt
+odczyt nie wymaga commita  
+ODCZYT INT Z FLASH*/
+esp_err_t nvs_mgr_get_int(const char* key,int32_t* value){
+    nvs_handle_t handle;
+    esp_err_t err = nvs_open(NAMESPACE,NVS_READONLY,&handle);    
+    if(err==ESP_OK){
+        err = nvs_get_i32(handle,key,value);
+    }
+    nvs_close(handle);
+    return err;
+}
+/*(drugi getter)  
+ponieważ zapisaliśmy bool jako 0 lub 1 tyak samo musimy odczytać 
+ODCZYT BOOL Z FLASH*/
+esp_err_t nvs_mgr_get_bool(const char* key,bool* value){
+    nvs_handle_t handle;
+    uint8_t raw_bool = 0;
+    esp_err_t err =nvs_open(NAMESPACE,NVS_READONLY,&handle);
+    if(err == ESP_OK){
+        err = nvs_get_u8(handle,key, &raw_bool);
+        if(err==ESP_OK){   // GDYBY NP. WARTOSC NIE ISTNIAŁA
+            if((raw_bool)==0){
+            *value = false;
+            } 
+            else{
+                *value = true;
+            }
+        }
+    }
+    nvs_close(handle);
+    return err;
+}
+/*(trzeci getter)
+float został zapisany jako blob (binay large object) (32 bity)*
+ODCZYT FLOAT Z FLASH*/
+esp_err_t nvs_mgr_get_float(const char* key, float*value){
+    nvs_handle_t handle;
+    size_t size = sizeof(float);
+    esp_err_t err = nvs_open(NAMESPACE,NVS_READONLY,&handle);
+    if(err==ESP_OK){
+        err  = nvs_get_blob(handle,key,value,&size);
+    }   
+    nvs_close(handle);
+    return err;
+}
+/*(czwarty getter)
+max_len jest wymagany do działania funkcji nvs_get_str
+ODCZYT STRING Z FLASH*/
+esp_err_t nvs_mgr_get_string(const char* key,char* value,size_t max_len){
+    nvs_handle_t handle;
+    size_t size =  max_len;
+    esp_err_t err =nvs_open(NAMESPACE,NVS_READONLY,&handle);
+    if(err==ESP_OK){
+        err = nvs_get_str(handle,key,value,&size);
+    }
     nvs_close(handle);
     return err;
 }
