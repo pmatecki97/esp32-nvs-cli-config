@@ -154,7 +154,7 @@ void cli_process_line(char *line){
      ma dwa słowa, czyli drugie słowo wpadnie do zmiennej type.
      OZNACZA TO ŻE W TYPE SIEDZI NAZWA KLUCZA !!!
     */
-    else if(strcpmp(cmd,"del")==0){
+    else if(strcmp(cmd,"del")==0){
         if(type==NULL){ //jesli nie podano klucza
             printf("Uzyj prawidlowego formatu: del <klucz>\n");
             return;
