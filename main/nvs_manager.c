@@ -154,3 +154,33 @@ esp_err_t nvs_mgr_get_string(const char* key,char* value,size_t max_len){
     nvs_close(handle);
     return err;
 }
+/*FUNKCJA SPRAWDZA ISTNIENIE KLUCZA W FLASH
+zwraca true gdy istnieje w flash zmienna o danym kluczu*/
+bool nvs_mgr_key_exists(const char* key){
+    nvs_handle_t handle;
+    esp_err_t err = nvs_open(NAMESPACE, NVS_READONLY,&handle);
+    if(err==ESP_OK){
+        nvs_type_t out_type;//typ poszukiwanej zmiennej
+        err =nvs_find_key(handle,key,&out_type); //funkcja szuka w flash elementu o zadanym kluczu
+        nvs_close(handle);
+    }
+    if(err==ESP_OK){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+/*FUNKCJA USUWA ZMIENNĄ O ZADANYM KLUCZU*/
+esp_err_t nvs_mgr_delete_key(const char *key){
+    nvs_handle_t handle;
+    esp_err_t err = nvs_open(NAMESPACE,NVS_READWRITE,&handle);
+    if(err==ESP_OK){
+        err=nvs_erase_key(handle,key);//funkcja usuwa daną z pamieci flash
+        if(err==ESP_OK){
+            err=nvs_commit(handle);//po jakiejkolwiek zmianie w flash wymagany commit
+        }
+        nvs_close(handle);
+    }
+    return err;
+}
