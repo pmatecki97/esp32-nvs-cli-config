@@ -1,5 +1,6 @@
 #include"cli_manager.h"
 #include"nvs_manager.h"
+#include "test_nvs.h"//do testów jednostkowych
 /*funkcja strtok(adres_początku," kiedy cięcie(ważna jest spacja) ") - funkcja służy do cięcia tekstu. 
 Wstawia znak konca tekstu "\0" tam, gdzie kończy się słowo i zwraca odczytane do 
 tego momenmtu słowo"*/
@@ -171,8 +172,12 @@ void cli_process_line(char *line){
     else if (strcmp(cmd, "list")==0){
         nvs_mgr_list_all();
     }
+    /*OBSŁUGA TESTÓW JEDNOSTKOWYCH W LINI KOMEND*/
+    else if (strcmp(cmd, "test") == 0){
+        run_nvs_unit_tests();
+    }
     else {
-        printf("Podaj prawidlowa komende: set, get, mod, del, list\n");
+        printf("Podaj prawidlowa komende: set, get, mod, del, list, test\n");
     }  
 }
 

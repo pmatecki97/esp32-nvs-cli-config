@@ -14,6 +14,20 @@ void app_main(void)
     printf("ESP32 TERMINAL RAM->FLASH GOTOWY!\n");
     
     nvs_mgr_load_defaults();//ładuje wartości domyslne parametrów
+
+    printf("\n============================================\n");
+    printf("   ESP32 NVS CLI - KONFIGURATOR RAKIETY\n");
+    printf("============================================\n");
+    printf("Dostepne typy: int, float, bool, str\n");
+    printf("Komendy:\n");
+    printf("  set <typ> <klucz> <wartosc>  - nowy parametr\n");
+    printf("  mod <typ> <klucz> <wartosc>  - zmiana parametru\n");
+    printf("  get <typ> <klucz>            - odczyt parametru\n");
+    printf("  del <klucz>                  - usuniecie klucza\n");
+    printf("  list                         - lista zapisanych danych\n");
+    printf("  test                         - testy jednostkowe NVS\n");
+    printf("Przyklad: mod int pulap 4500\n");
+    printf("============================================\n\n");
     
     char line_buf[128]; //bufor na wpisywane linijki
     int idx =0;
@@ -31,12 +45,19 @@ void app_main(void)
                 idx=0;
             }
         }
+        else if (c == '\b' || c == 127) { // obsługa backspace i delete
+            if (idx > 0) {
+                idx--;              
+                printf("\b \b"); // usunięcie znaku z ekranu terminala
+                fflush(stdout);
+            }
+        }
         else{ //wpisano zwykły znak
             if(idx < sizeof(line_buf)-1){
                 line_buf[idx] = (char)c;
                 idx++;
-                putchar(c); 
-                fflush(stdout); //wypisuje znaki na ekranie na strumien stdout
+                putchar(c); //wypisuje znaki na ekranie na strumien stdout 
+                fflush(stdout); 
             }
         }
     }

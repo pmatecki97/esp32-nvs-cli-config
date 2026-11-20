@@ -249,16 +249,16 @@ void nvs_mgr_list_all(void){
 }
 /**/
 void nvs_mgr_load_defaults(void){
-    if(!nvs_mgr_key_exists("tar_height")){
-        nvs_mgr_set_int("tar_height",3000);
+    if(!nvs_mgr_key_exists("pulap")){
+        nvs_mgr_set_int("pulap",3000);
     }
-    if(!nvs_mgr_key_exists("start_angle")){
-        nvs_mgr_set_float("start_angle",85.0);
+    if(!nvs_mgr_key_exists("kat")){
+        nvs_mgr_set_float("kat",85.0);
     }
-    if(!nvs_mgr_key_exists("armed")){
-        nvs_mgr_set_bool("armed",false);
+    if(!nvs_mgr_key_exists("uzbrojony")){
+        nvs_mgr_set_bool("uzbrojony",false);
     }
-    if(!nvs_mgr_key_exists("rocket_name")){
-        nvs_mgr_set_string("rocket_name","ARROW");
+    if(!nvs_mgr_key_exists("nazwa")){
+        nvs_mgr_set_string("nazwa","ARROW");
     }
 }

@@ -4,6 +4,4 @@
 #include<stdio.h>
 void cli_process_line(char *line);
 
-
-
 #endif
