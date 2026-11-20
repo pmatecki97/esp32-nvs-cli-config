@@ -167,8 +167,12 @@ void cli_process_line(char *line){
             printf("Blad usuwania '%s': %s\n",type,esp_err_to_name(err));
         }
     }
+    /*OBSŁUGA LIST W LINI KOMEND*/
+    else if (strcmp(cmd, "list")==0){
+        nvs_mgr_list_all();
+    }
     else {
-        printf("Podaj prawidlowa komende: set, get, mod, del\n");
+        printf("Podaj prawidlowa komende: set, get, mod, del, list\n");
     }  
 }
 

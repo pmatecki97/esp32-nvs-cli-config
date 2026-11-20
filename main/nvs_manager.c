@@ -184,3 +184,81 @@ esp_err_t nvs_mgr_delete_key(const char *key){
     }
     return err;
 }
+/*FUNKCJA WYCIĄGA DANE Z FLASH ORAZ WYPISUJE NA EKRANIE*/
+void nvs_mgr_list_all(void){
+    nvs_iterator_t it = NULL; //wskaźnik do iteratora
+    /*struktura na dane z flash po których iterujemyz polami:
+    -namespace_name
+    -key
+    -type
+    */
+    nvs_entry_info_t info;
+    /*FUNKCJA PRZESZUKUJE FLASH I GDY ZNAJDZIE NPIERWSZĄ DANĄ W NASZYM "FOLDERZE"
+    ALOKUJE PAMIĘĆ W RAM DLA NASZEGO ITERATORA I ZWRACA ESP_OK GDY WSZYSTKO GRA*/
+    esp_err_t err = nvs_entry_find(NVS_DEFAULT_PART_NAME,NAMESPACE,NVS_TYPE_ANY,&it);
+    if(err != ESP_OK){ //jeżeli nie ma żadnych wpisów
+        printf("Brak zapisanych parametrów w '%s'.\n",NAMESPACE);
+        return;
+    }
+    while(err==ESP_OK){ //pętla iteracji po danych
+        /*FUNKCJA KOPIUJE NAZWE I KLUCZ DO STRUKTURY 
+        INFO Z TEGO NA CO WSKAZUJE ITERATOR IT*/
+        nvs_entry_info(it,&info);
+        switch (info.type)
+        {
+        case NVS_TYPE_I32:{
+            int32_t val;
+            nvs_mgr_get_int(info.key,&val);
+            printf("[int] %s = %ld\n",info.key,(long)val);
+            break;
+        }
+        case NVS_TYPE_BLOB:{
+            float val;
+            nvs_mgr_get_float(info.key,&val);
+            printf("[float] %s = %.4f\n",info.key,val);
+            break;
+        }
+        case NVS_TYPE_U8:{
+            bool val;
+            nvs_mgr_get_bool(info.key,&val);
+            if(val==true){
+                printf("[bool] %s = true\n",info.key);
+            }
+            else{
+                printf("[bool] %s = false\n",info.key);
+            }
+            break;
+        }
+        case NVS_TYPE_STR:{
+            char val[64];
+            nvs_mgr_get_string(info.key,val,sizeof(val));
+            printf("[string] %s = %s\n",info.key,val);
+            break;
+        }
+        default:
+        printf("[inny_typ] %s\n",info.key);
+            break;
+        }
+        /*ODPOWIEDNIK i++, ZWRACA 
+        ESP_ERR_NVS_NOT_FOUND GDY BRAK KOLEJNYCH DANYCH*/
+        err=nvs_entry_next(&it);
+    }
+    /*WYMAGANE ZWOLNIENIE PAMIĘCI 
+    DYNAMICZNEJ ABY UNIKNĄĆ WYCIEKÓW PAMIĘCI*/
+    nvs_release_iterator(it);
+}
+/**/
+void nvs_mgr_load_defaults(void){
+    if(!nvs_mgr_key_exists("tar_height")){
+        nvs_mgr_set_int("tar_height",3000);
+    }
+    if(!nvs_mgr_key_exists("start_angle")){
+        nvs_mgr_set_float("start_angle",85.0);
+    }
+    if(!nvs_mgr_key_exists("armed")){
+        nvs_mgr_set_bool("armed",false);
+    }
+    if(!nvs_mgr_key_exists("rocket_name")){
+        nvs_mgr_set_string("rocket_name","ARROW");
+    }
+}

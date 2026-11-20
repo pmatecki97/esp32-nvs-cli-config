@@ -13,6 +13,8 @@ void app_main(void)
     }
     printf("ESP32 TERMINAL RAM->FLASH GOTOWY!\n");
     
+    nvs_mgr_load_defaults();//ładuje wartości domyslne parametrów
+    
     char line_buf[128]; //bufor na wpisywane linijki
     int idx =0;
     
